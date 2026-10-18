@@ -1,0 +1,10 @@
+# Optional NVIDIA access; apply explicitly after configuring the host toolkit.
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

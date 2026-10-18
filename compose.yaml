@@ -1,0 +1,162 @@
+name: prisma
+x-backend: &backend
+  build: ./backend
+  environment: &backend-environment
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-prisma}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-prisma}
+    REDIS_URL: redis://redis:6379/0
+    PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3000}
+    COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    SESSION_DAYS: ${SESSION_DAYS:-7}
+    DEMO_STEP_SECONDS: ${DEMO_STEP_SECONDS:-0.8}
+    OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+    OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:1.7b}
+    OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-all-minilm}
+    MODEL_CONTEXT_TOKENS: ${MODEL_CONTEXT_TOKENS:-4096}
+    MODEL_OUTPUT_TOKENS: ${MODEL_OUTPUT_TOKENS:-1200}
+    MODEL_TIMEOUT_SECONDS: ${MODEL_TIMEOUT_SECONDS:-180}
+    RESEARCH_TIMEOUT_SECONDS: ${RESEARCH_TIMEOUT_SECONDS:-45}
+    MODEL_THREADS: ${MODEL_THREADS:-3}
+    ALLOW_HOSTED_MODELS: ${ALLOW_HOSTED_MODELS:-false}
+    ALLOW_HOSTED_QUERIES: ${ALLOW_HOSTED_QUERIES:-true}
+    GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+    GEMINI_QUERY_MODEL: ${GEMINI_QUERY_MODEL:-gemini-3.5-flash-lite}
+    GEMINI_QUERY_CONTEXT_TOKENS: ${GEMINI_QUERY_CONTEXT_TOKENS:-32768}
+    GEMINI_QUERY_OUTPUT_TOKENS: ${GEMINI_QUERY_OUTPUT_TOKENS:-3000}
+    GEMINI_QUERY_RPM: ${GEMINI_QUERY_RPM:-6}
+    GEMINI_QUERY_INPUT_TPM: ${GEMINI_QUERY_INPUT_TPM:-120000}
+    GEMINI_QUOTA_PROJECT: ${GEMINI_QUOTA_PROJECT:-}
+    RESEARCH_MAX_WAIT_SECONDS: ${RESEARCH_MAX_WAIT_SECONDS:-65}
+    RESEARCH_TOTAL_SECONDS: ${RESEARCH_TOTAL_SECONDS:-180}
+    RESEARCH_RETRY_ATTEMPTS: ${RESEARCH_RETRY_ATTEMPTS:-3}
+    GEMINI_EMBEDDING_MODEL: ${GEMINI_EMBEDDING_MODEL:-gemini-embedding-001}
+    ALLOW_LARGE_LOCAL_MODELS: ${ALLOW_LARGE_LOCAL_MODELS:-false}
+    OLLAMA_BALANCED_MODEL: ${OLLAMA_BALANCED_MODEL:-}
+    OLLAMA_ADVANCED_MODEL: ${OLLAMA_ADVANCED_MODEL:-}
+    INFERENCE_MEMORY_BUDGET_BYTES: ${INFERENCE_MEMORY_BUDGET_BYTES:-3000000000}
+    LOCAL_GPU_LAYERS: ${LOCAL_GPU_LAYERS:-0}
+    TINYFISH_ENABLED: ${TINYFISH_ENABLED:-false}
+    TINYFISH_API_KEY: ${TINYFISH_API_KEY:-}
+    TINYFISH_SEARCH_DAILY_LIMIT: ${TINYFISH_SEARCH_DAILY_LIMIT:-100}
+    TINYFISH_FETCH_DAILY_LIMIT: ${TINYFISH_FETCH_DAILY_LIMIT:-200}
+    TINYFISH_CACHE_SECONDS: ${TINYFISH_CACHE_SECONDS:-3600}
+    TINYFISH_SEARCHES_PER_RUN: ${TINYFISH_SEARCHES_PER_RUN:-1}
+    TINYFISH_FETCH_ATTEMPTS_PER_RUN: ${TINYFISH_FETCH_ATTEMPTS_PER_RUN:-6}
+    TINYFISH_SEARCH_MAX_PER_RUN: ${TINYFISH_SEARCH_MAX_PER_RUN:-5}
+    TINYFISH_FETCH_MAX_PER_RUN: ${TINYFISH_FETCH_MAX_PER_RUN:-20}
+    BROWSER_OBSERVER_URL: http://browser:8010
+    PUBLIC_FILE_MAX_PER_RUN: ${PUBLIC_FILE_MAX_PER_RUN:-12}
+    SOURCE_BUNDLE_CHARACTERS: ${SOURCE_BUNDLE_CHARACTERS:-12000000}
+    ANALYSIS_MAX_EMBEDDING_REQUESTS: ${ANALYSIS_MAX_EMBEDDING_REQUESTS:-64}
+    ANALYSIS_MAX_REQUESTS: ${ANALYSIS_MAX_REQUESTS:-16}
+    ANALYSIS_MAX_PASSAGES: ${ANALYSIS_MAX_PASSAGES:-48}
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-prisma}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-prisma}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --appendonly, 'yes', --appendfsync, everysec]
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  migrate:
+    <<: *backend
+    command: [alembic, upgrade, head]
+    depends_on:
+      db: {condition: service_healthy}
+    restart: 'no'
+  api:
+    <<: *backend
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    ports: [127.0.0.1:3000:3000]
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  research:
+    <<: *backend
+    command: [python, -m, app.worker]
+    environment:
+      <<: *backend-environment
+      WORKER_QUEUES: research
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    cpus: 1
+    mem_limit: 512m
+    restart: unless-stopped
+  browser:
+    profiles: [browser]
+    build:
+      context: .
+      dockerfile: browser/Dockerfile
+    init: true
+    read_only: true
+    tmpfs: ["/tmp:size=256m,mode=1777", "/home/pwuser:size=64m,mode=1777"]
+    shm_size: 256m
+    cpus: 2
+    mem_limit: 1g
+    pids_limit: 256
+    security_opt: [seccomp:./browser/seccomp_profile.json]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/ready', timeout=12)"]
+      interval: 15s
+      timeout: 15s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+  ollama:
+    image: ollama/ollama:0.35.0
+    profiles: [inference]
+    environment:
+      OLLAMA_NUM_PARALLEL: '1'
+      OLLAMA_MAX_LOADED_MODELS: '1'
+      OLLAMA_KEEP_ALIVE: '0'
+    cpus: ${OLLAMA_CPU_LIMIT:-3}
+    mem_limit: ${OLLAMA_MEMORY_LIMIT:-3g}
+    memswap_limit: ${OLLAMA_MEMORY_LIMIT:-3g}
+    volumes: [ollama_data:/root/.ollama]
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_data:

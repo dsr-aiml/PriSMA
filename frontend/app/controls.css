@@ -1,0 +1,44 @@
+/* Workspace controls are distinct from the decorative landing perspective. */
+.action-button,.select-trigger,.export-trigger {
+  border-radius:9px;
+  box-shadow:var(--control-shadow);
+  transition:background 160ms ease,border-color 160ms ease,color 160ms ease,opacity 160ms ease;
+}
+.action-button:hover,.action-button:active {transform:none;box-shadow:var(--control-shadow);}
+.primary-action {background:linear-gradient(135deg,var(--button-gloss),var(--button));border:1px solid transparent;color:var(--button-text);}
+.primary-action:hover:not(:disabled) {background:linear-gradient(135deg,color-mix(in srgb,var(--button-gloss) 96%,white),var(--button));box-shadow:var(--control-shadow);}
+.secondary-action,.select-trigger,.export-trigger {background:var(--surface);border:1px solid var(--control-border);}
+.secondary-action:hover:not(:disabled),.select-trigger:hover:not(:disabled),.export-trigger:hover:not(:disabled),.export-trigger[data-state=open] {background:var(--hover);border-color:var(--control-border-active);box-shadow:var(--control-shadow);}
+.view-switch,.map-scope {gap:6px;}
+.view-switch button,.map-scope button,.finding-filters>button,.lane-filter>button,.comparison-filters>button {
+  border:1px solid transparent;
+  border-radius:8px;
+  background:transparent;
+  color:var(--muted);
+  box-shadow:none;
+  transition:background 150ms ease,border-color 150ms ease,color 150ms ease;
+}
+.view-switch button:hover,.map-scope button:hover,.finding-filters>button:hover,.lane-filter>button:hover,.comparison-filters>button:hover {background:var(--hover);color:var(--text);}
+.view-switch button[aria-pressed=true],.map-scope button[aria-pressed=true],.finding-filters>button[aria-pressed=true],.lane-filter>button[aria-pressed=true],.comparison-filters>button[aria-pressed=true] {
+  background:var(--control-selected);
+  border:1px solid var(--control-border-active);
+  color:var(--text);
+  box-shadow:none;
+}
+.engine-options>button[aria-pressed=true] {background:var(--control-selected);box-shadow:none;}
+.engine-options>button[aria-pressed=true]:after {content:none;display:none;}
+.reference-scope-options>button {background:var(--surface);border:1px solid var(--control-border);box-shadow:none;}
+.reference-scope-options>button[aria-pressed=true] {background:var(--control-selected);border-color:var(--control-border-active);box-shadow:none;}
+.reference-scope-options>button:hover {background:var(--hover);}
+.report-tabs button[aria-selected=true],.assessment-navigation>button[aria-selected=true],.investigation-modes button[aria-pressed=true],.intake-kind-tabs button[aria-pressed=true] {border-bottom-color:var(--focus);}
+.comparison-filters button[aria-pressed=true] {border-color:var(--control-border-active);}
+.graph-controls button,.icon-button {box-shadow:none;}
+.overview-extent strong,.overview-stat-line strong,.assessment-scorecard strong,.scope-counter strong,.product-coverage-line strong {color:var(--accent);}
+@supports (-webkit-background-clip:text) or (background-clip:text) {
+  .overview-extent strong,.overview-stat-line strong,.assessment-scorecard strong,.scope-counter strong,.product-coverage-line strong {
+    background:linear-gradient(130deg,var(--accent-start),var(--accent-end));
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+}
+@media(prefers-reduced-motion:reduce){.action-button,.select-trigger,.export-trigger,.view-switch button,.map-scope button{transition:none;}}

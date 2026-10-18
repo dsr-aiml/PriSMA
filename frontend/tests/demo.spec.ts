@@ -1,0 +1,38 @@
+import { test, expect } from "@playwright/test";
+
+test("stateless reference, expanded graph, export and reload", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Username", { exact: true }).fill(`e2e_${Date.now()}`);
+  await page.getByLabel("Email", { exact: true }).fill(`e2e-${Date.now()}@example.com`);
+  await page.getByLabel("Password", { exact: true }).fill("e2e-local-password");
+  await page.getByRole("button", { name: "Create account", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "UNDERSTAND THE SYSTEM.", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Reference", exact: true }).click();
+  await page.getByRole("button", { name: "Open report", exact: true }).click();
+  await page.getByRole("tab", { name: /Architecture/ }).click();
+  await expect(page.getByRole("heading", { name: "Architecture constellation", exact: true })).toBeVisible();
+  const expand = page.getByRole("button", { name: "Expand architecture graph", exact: true });
+  await expand.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await page.waitForTimeout(300);
+  const rectangle = await dialog.boundingBox();
+  const viewport = page.viewportSize()!;
+  expect(rectangle!.width / viewport.width).toBeGreaterThan(0.89);
+  expect(rectangle!.height / viewport.height).toBeGreaterThan(0.89);
+  await dialog.getByLabel("Find a component", { exact: true }).fill("Application API");
+  await dialog.locator(".react-flow__node-component").filter({ hasText: "Application API" }).click();
+  await expect(dialog.getByRole("heading", { name: "Evidence", exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: "Close graph details", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(expand).toBeFocused();
+  await page.getByRole("button", { name: "Export assessment", exact: true }).click();
+  const downloading = page.waitForEvent("download");
+  await page.getByRole("menuitem", { name: /Database/ }).click();
+  expect((await downloading).suggestedFilename()).toMatch(/\.sqlite$/);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Open report", exact: true })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+});

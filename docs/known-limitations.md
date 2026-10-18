@@ -1,0 +1,15 @@
+# Known limitations
+
+- This is an integration scaffold, not certified production software. See scaffold-status.md for its exact boundaries.
+- Actual TinyFish, Ollama/Gemini, GPU and browser acceptance were not run during packaging. Test on your device and provider account before relying on results.
+- Conservative heading/negation/reference checks and exact quotes reduce unsupported findings but do not establish semantic entailment. Small models can miss entities, features, limits or relationships; larger models can still misinterpret sources. Fuzzy aliases remain unresolved rather than guessed.
+- Source intake is bounded and format-aware; see source-intake.md. Scanned/encrypted PDFs, nested archives, dynamic execution and unsupported binaries are excluded. Static extractors cover a defined set of constructs, not all languages or framework variants. The public GitHub resolver downloads one bounded branch ZIP; other hosts require a supplied archive.
+- Model extraction is bounded by passage/time budgets. Partial coverage is recorded. Bounded browser inspection and supplied HAR capture are supported. Automatic authenticated interactions, unbounded crawling, hidden-endpoint probing, private schema recovery and guaranteed hidden-stack deduction remain unsupported.
+- Collection validates requested and final evidence URLs but does not control a remote provider's redirect egress. It does not log into sites or bypass access controls. Failed pages remain collection outcomes.
+- Application quotas cannot see other uses of the same API key and cannot prove zero provider billing. Verify account allowances; no Agent/Browser fallback exists.
+- Hardware display uses configured inference capacity, installed model weights and observed loaded-model VRAM. Physical GPU compatibility/free RAM and multitasking quality remain manual benchmark gates. Heavy profiles are administrator-configured, not automatically selected from a GPU name.
+- Existing reference reports retain their original fixture version and output. Prior reports are never upgraded or reinterpreted silently.
+- Accounts are local password/cookie accounts. Email verification/reset, MFA, comprehensive rate limits, retention and hard-crash recovery remain future production work. Keep local services private until deployment hardening is completed.
+
+- 0.8.1 collection is general across supported public evidence types, not a complete reconstruction of arbitrary software. Public page budgets, inaccessible bundles, missing maps, dynamic route construction, authenticated features and private schemas can remain unresolved. Source classification/route conventions are heuristic and recorded. Query AST validation excludes known side-effect syntax but does not verify arbitrary server resolver implementations; POST query replay requires explicit scope selection.
+- Production compilation was verified in the packaging executor with an isolated memory-metric adapter because its /proc filesystem is absent; that adapter is not shipped. Real Docker/Chromium startup, visual rendering and provider-account acceptance remain manual checks.

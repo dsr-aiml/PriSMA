@@ -1,0 +1,771 @@
+{
+  "name": "Atlas \u2014 fictional enterprise collaboration platform",
+  "version": "2.0",
+  "evidence": [
+    {
+      "key": "frontend",
+      "source_url": "https://atlas.example/docs/frontend",
+      "source_type": "documentation",
+      "category": "frontend",
+      "content": "The Atlas client guide identifies Next.js page rendering, browser-side navigation, and calls to the application API.",
+      "signals": {
+        "component": {
+          "id": "frontend",
+          "label": "Web application",
+          "kind": "frontend",
+          "lane": "Delivery",
+          "position": {
+            "x": 0,
+            "y": 270
+          },
+          "description": "Next.js page rendering",
+          "classification": "observed",
+          "technology": "Next.js"
+        },
+        "connections": [
+          {
+            "source": "frontend",
+            "target": "gateway",
+            "label": "HTTPS requests",
+            "classification": "observed"
+          },
+          {
+            "source": "frontend",
+            "target": "realtime",
+            "label": "Live updates",
+            "classification": "observed"
+          },
+          {
+            "source": "edge",
+            "target": "frontend",
+            "label": "Page delivery",
+            "classification": "inferred"
+          }
+        ]
+      }
+    },
+    {
+      "key": "api",
+      "source_url": "https://atlas.example/docs/api",
+      "source_type": "documentation",
+      "category": "api",
+      "content": "The Atlas API reference documents workspace, project, task, file, webhook, audit, billing, and job resources. Bearer credentials are required. Resource identifiers describe a logical model; field types and storage technology are not specified.",
+      "signals": {
+        "component": {
+          "id": "api",
+          "label": "Application API",
+          "kind": "api",
+          "lane": "Application",
+          "position": {
+            "x": 340,
+            "y": 270
+          },
+          "description": "Workspace and project services",
+          "classification": "observed",
+          "technology": "REST"
+        },
+        "connections": [
+          {
+            "source": "gateway",
+            "target": "api",
+            "label": "Routes requests",
+            "classification": "observed"
+          },
+          {
+            "source": "api",
+            "target": "auth",
+            "label": "Checks identity",
+            "classification": "inferred"
+          },
+          {
+            "source": "api",
+            "target": "data",
+            "label": "Reads and writes",
+            "classification": "inferred"
+          },
+          {
+            "source": "api",
+            "target": "broker",
+            "label": "Publishes jobs",
+            "classification": "observed"
+          },
+          {
+            "source": "api",
+            "target": "search",
+            "label": "Search requests",
+            "classification": "observed"
+          },
+          {
+            "source": "api",
+            "target": "storage",
+            "label": "Signed uploads",
+            "classification": "observed"
+          },
+          {
+            "source": "api",
+            "target": "billing",
+            "label": "Subscription operations",
+            "classification": "inferred"
+          },
+          {
+            "source": "api",
+            "target": "audit",
+            "label": "Records actions",
+            "classification": "observed"
+          }
+        ],
+        "resources": {
+          "Workspace": [
+            "id",
+            "name",
+            "region"
+          ],
+          "User": [
+            "id",
+            "email",
+            "display_name"
+          ],
+          "Membership": [
+            "id",
+            "workspace_id",
+            "user_id",
+            "role"
+          ],
+          "Project": [
+            "id",
+            "workspace_id",
+            "name",
+            "archived_at"
+          ],
+          "Task": [
+            "id",
+            "project_id",
+            "assignee_id",
+            "title",
+            "status"
+          ],
+          "File": [
+            "id",
+            "project_id",
+            "object_key",
+            "size"
+          ],
+          "Webhook": [
+            "id",
+            "workspace_id",
+            "destination",
+            "enabled"
+          ],
+          "AuditEvent": [
+            "id",
+            "workspace_id",
+            "actor_id",
+            "action",
+            "created_at"
+          ],
+          "Invoice": [
+            "id",
+            "workspace_id",
+            "subscription_id",
+            "status"
+          ],
+          "Connection": [
+            "id",
+            "workspace_id",
+            "provider"
+          ],
+          "Job": [
+            "id",
+            "workspace_id",
+            "kind",
+            "state",
+            "attempt"
+          ]
+        },
+        "entity_relationships": [
+          {
+            "source": "workspace",
+            "target": "membership",
+            "field": "workspace_id"
+          },
+          {
+            "source": "user",
+            "target": "membership",
+            "field": "user_id"
+          },
+          {
+            "source": "workspace",
+            "target": "project",
+            "field": "workspace_id"
+          },
+          {
+            "source": "project",
+            "target": "task",
+            "field": "project_id"
+          },
+          {
+            "source": "user",
+            "target": "task",
+            "field": "assignee_id"
+          },
+          {
+            "source": "project",
+            "target": "file",
+            "field": "project_id"
+          },
+          {
+            "source": "workspace",
+            "target": "webhook",
+            "field": "workspace_id"
+          },
+          {
+            "source": "workspace",
+            "target": "auditevent",
+            "field": "workspace_id"
+          },
+          {
+            "source": "user",
+            "target": "auditevent",
+            "field": "actor_id"
+          },
+          {
+            "source": "workspace",
+            "target": "invoice",
+            "field": "workspace_id"
+          },
+          {
+            "source": "workspace",
+            "target": "connection",
+            "field": "workspace_id"
+          },
+          {
+            "source": "workspace",
+            "target": "job",
+            "field": "workspace_id"
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/v1/workspaces"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/projects"
+          },
+          {
+            "method": "POST",
+            "path": "/v1/projects"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/tasks"
+          },
+          {
+            "method": "PATCH",
+            "path": "/v1/tasks/{id}"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/memberships"
+          },
+          {
+            "method": "POST",
+            "path": "/v1/files/presign"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/search"
+          },
+          {
+            "method": "POST",
+            "path": "/v1/webhooks"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/audit-events"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/invoices"
+          },
+          {
+            "method": "POST",
+            "path": "/v1/connections"
+          },
+          {
+            "method": "GET",
+            "path": "/v1/jobs/{id}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "auth",
+      "source_url": "https://atlas.example/docs/auth",
+      "source_type": "documentation",
+      "category": "authentication",
+      "content": "The Atlas SSO guide names OpenID Connect for login and SCIM for directory provisioning. Authorization roles are workspace-scoped. Session persistence is not described.",
+      "signals": {
+        "component": {
+          "id": "auth",
+          "label": "Identity service",
+          "kind": "auth",
+          "lane": "Platform",
+          "position": {
+            "x": 680,
+            "y": 50
+          },
+          "description": "Federated sign-in and provisioning",
+          "classification": "observed",
+          "technology": "OpenID Connect"
+        }
+      }
+    },
+    {
+      "key": "edge",
+      "source_url": "https://atlas.example/docs/edge",
+      "source_type": "documentation",
+      "category": "infrastructure",
+      "content": "Sample response metadata includes server: cloudflare and an edge request identifier. This supports an edge proxy observation, while origin hosting and failover remain unspecified.",
+      "signals": {
+        "component": {
+          "id": "edge",
+          "label": "Edge delivery",
+          "kind": "infrastructure",
+          "lane": "Delivery",
+          "position": {
+            "x": 0,
+            "y": 50
+          },
+          "description": "Public edge and content delivery",
+          "classification": "inferred",
+          "technology": "Cloudflare"
+        }
+      }
+    },
+    {
+      "key": "billing",
+      "source_url": "https://atlas.example/docs/billing",
+      "source_type": "documentation",
+      "category": "integration",
+      "content": "The Atlas billing guide names Stripe Checkout and documents subscription-change notifications. Checkout is hosted externally.",
+      "signals": {
+        "component": {
+          "id": "billing",
+          "label": "Billing integration",
+          "kind": "service",
+          "lane": "External services",
+          "position": {
+            "x": 1020,
+            "y": 50
+          },
+          "description": "Hosted subscription checkout",
+          "classification": "observed",
+          "technology": "Stripe"
+        },
+        "connections": [
+          {
+            "source": "billing",
+            "target": "integrations",
+            "label": "Subscription events",
+            "classification": "inferred"
+          }
+        ]
+      }
+    },
+    {
+      "key": "gateway",
+      "source_url": "https://atlas.example/docs/gateway",
+      "source_type": "documentation",
+      "category": "api",
+      "content": "The Atlas gateway guide describes /v1 route forwarding, request identifiers, tenant rate limits, and authentication checks before application handlers.",
+      "signals": {
+        "component": {
+          "id": "gateway",
+          "label": "API gateway",
+          "kind": "gateway",
+          "lane": "Application",
+          "position": {
+            "x": 340,
+            "y": 50
+          },
+          "description": "Routing and tenant request policy",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "edge",
+            "target": "gateway",
+            "label": "API entry",
+            "classification": "inferred"
+          },
+          {
+            "source": "gateway",
+            "target": "auth",
+            "label": "Token validation",
+            "classification": "observed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "realtime",
+      "source_url": "https://atlas.example/docs/realtime",
+      "source_type": "documentation",
+      "category": "realtime",
+      "content": "The Atlas realtime reference documents server-sent event subscriptions for project changes and reconnect cursors. The internal fan-out implementation is not stated.",
+      "signals": {
+        "component": {
+          "id": "realtime",
+          "label": "Realtime delivery",
+          "kind": "realtime",
+          "lane": "Delivery",
+          "position": {
+            "x": 0,
+            "y": 490
+          },
+          "description": "Project change subscriptions",
+          "classification": "observed",
+          "technology": "Server-sent events"
+        },
+        "connections": [
+          {
+            "source": "broker",
+            "target": "realtime",
+            "label": "Change notifications",
+            "classification": "hypothesis"
+          }
+        ]
+      }
+    },
+    {
+      "key": "worker",
+      "source_url": "https://atlas.example/docs/worker",
+      "source_type": "documentation",
+      "category": "processing",
+      "content": "The Atlas operations guide describes workers that process imports, attachment extraction, integration sync, and notification tasks from a managed work queue. Processing may be retried.",
+      "signals": {
+        "component": {
+          "id": "worker",
+          "label": "Background workers",
+          "kind": "worker",
+          "lane": "Application",
+          "position": {
+            "x": 340,
+            "y": 490
+          },
+          "description": "Import and notification processing",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "broker",
+            "target": "worker",
+            "label": "Consumes work",
+            "classification": "observed"
+          },
+          {
+            "source": "worker",
+            "target": "data",
+            "label": "Updates records",
+            "classification": "inferred"
+          },
+          {
+            "source": "worker",
+            "target": "search",
+            "label": "Refreshes index",
+            "classification": "observed"
+          },
+          {
+            "source": "worker",
+            "target": "storage",
+            "label": "Processes attachments",
+            "classification": "observed"
+          },
+          {
+            "source": "worker",
+            "target": "mail",
+            "label": "Sends notifications",
+            "classification": "observed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "broker",
+      "source_url": "https://atlas.example/docs/broker",
+      "source_type": "documentation",
+      "category": "messaging",
+      "content": "The Atlas queue contract specifies at-least-once delivery, per-workspace ordering keys, retries, and a dead-letter queue. Consumers must deduplicate side effects. The broker vendor is not disclosed.",
+      "signals": {
+        "component": {
+          "id": "broker",
+          "label": "Event transport",
+          "kind": "queue",
+          "lane": "Application",
+          "position": {
+            "x": 340,
+            "y": 710
+          },
+          "description": "Queued work and domain events",
+          "classification": "observed"
+        },
+        "delivery_contract": "at-least-once"
+      }
+    },
+    {
+      "key": "data",
+      "source_url": "https://atlas.example/docs/data",
+      "source_type": "documentation",
+      "category": "data_model",
+      "content": "The Atlas data guide describes workspace isolation, record revisions, and retention policies. It does not identify the database engine, physical tables, field types, or replication topology.",
+      "signals": {
+        "component": {
+          "id": "data",
+          "label": "Data persistence",
+          "kind": "database",
+          "lane": "Platform",
+          "position": {
+            "x": 680,
+            "y": 270
+          },
+          "description": "Logical business records",
+          "classification": "inferred"
+        }
+      }
+    },
+    {
+      "key": "search",
+      "source_url": "https://atlas.example/docs/search",
+      "source_type": "documentation",
+      "category": "search",
+      "content": "The Atlas search guide states that project and attachment content is indexed asynchronously, with workspace-scoped access checks. No search engine product is named.",
+      "signals": {
+        "component": {
+          "id": "search",
+          "label": "Search index",
+          "kind": "search",
+          "lane": "Platform",
+          "position": {
+            "x": 680,
+            "y": 490
+          },
+          "description": "Project and document retrieval",
+          "classification": "observed"
+        }
+      }
+    },
+    {
+      "key": "storage",
+      "source_url": "https://atlas.example/docs/storage",
+      "source_type": "documentation",
+      "category": "storage",
+      "content": "The Atlas attachment guide documents an S3-compatible object API, signed transfer URLs, workspace prefixes, and lifecycle policies. The storage operator is not disclosed.",
+      "signals": {
+        "component": {
+          "id": "storage",
+          "label": "Object storage",
+          "kind": "storage",
+          "lane": "Platform",
+          "position": {
+            "x": 680,
+            "y": 710
+          },
+          "description": "Attachments and signed transfers",
+          "classification": "observed",
+          "technology": "S3-compatible API"
+        }
+      }
+    },
+    {
+      "key": "integrations",
+      "source_url": "https://atlas.example/docs/integrations",
+      "source_type": "documentation",
+      "category": "integration",
+      "content": "The Atlas integration guide documents signed outgoing webhooks, delivery history, and scheduled connector synchronization. Retry attempts carry an idempotency key.",
+      "signals": {
+        "component": {
+          "id": "integrations",
+          "label": "Integration service",
+          "kind": "integration",
+          "lane": "External services",
+          "position": {
+            "x": 1020,
+            "y": 270
+          },
+          "description": "Webhook delivery and connector sync",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "broker",
+            "target": "integrations",
+            "label": "Dispatches events",
+            "classification": "inferred"
+          },
+          {
+            "source": "integrations",
+            "target": "api",
+            "label": "Connector updates",
+            "classification": "hypothesis"
+          }
+        ]
+      }
+    },
+    {
+      "key": "mail",
+      "source_url": "https://atlas.example/docs/mail",
+      "source_type": "documentation",
+      "category": "notification",
+      "content": "The Atlas notifications guide describes invitation, task assignment, and billing emails through an external delivery provider. Provider identity and delivery infrastructure remain unknown.",
+      "signals": {
+        "component": {
+          "id": "mail",
+          "label": "Notification delivery",
+          "kind": "notification",
+          "lane": "External services",
+          "position": {
+            "x": 1020,
+            "y": 490
+          },
+          "description": "Transactional email",
+          "classification": "observed"
+        }
+      }
+    },
+    {
+      "key": "audit",
+      "source_url": "https://atlas.example/docs/audit",
+      "source_type": "documentation",
+      "category": "audit",
+      "content": "The Atlas audit guide describes actor, action, target, and request identifiers for administrative changes. Audit retention is configurable by workspace.",
+      "signals": {
+        "component": {
+          "id": "audit",
+          "label": "Audit trail",
+          "kind": "audit",
+          "lane": "Operations",
+          "position": {
+            "x": 1360,
+            "y": 50
+          },
+          "description": "Workspace activity records",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "auth",
+            "target": "audit",
+            "label": "Identity changes",
+            "classification": "hypothesis"
+          }
+        ]
+      }
+    },
+    {
+      "key": "metrics",
+      "source_url": "https://atlas.example/docs/metrics",
+      "source_type": "documentation",
+      "category": "operations",
+      "content": "The Atlas telemetry guide names OpenTelemetry traces, structured logs, and service-level metrics. Telemetry is retained separately from customer-facing audit records.",
+      "signals": {
+        "component": {
+          "id": "metrics",
+          "label": "Observability",
+          "kind": "monitoring",
+          "lane": "Operations",
+          "position": {
+            "x": 1360,
+            "y": 270
+          },
+          "description": "Service traces and operational metrics",
+          "classification": "observed",
+          "technology": "OpenTelemetry"
+        },
+        "connections": [
+          {
+            "source": "api",
+            "target": "metrics",
+            "label": "Request traces",
+            "classification": "observed"
+          },
+          {
+            "source": "worker",
+            "target": "metrics",
+            "label": "Job traces",
+            "classification": "observed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "deploy",
+      "source_url": "https://atlas.example/docs/deploy",
+      "source_type": "documentation",
+      "category": "deployment",
+      "content": "The Atlas release guide describes environment promotion, approval checks, migration sequencing, and rollback gates. Runtime hosting and container orchestration are not disclosed.",
+      "signals": {
+        "component": {
+          "id": "deploy",
+          "label": "Delivery pipeline",
+          "kind": "deployment",
+          "lane": "Operations",
+          "position": {
+            "x": 1360,
+            "y": 490
+          },
+          "description": "Staged releases and rollback",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "deploy",
+            "target": "api",
+            "label": "Deploys services",
+            "classification": "hypothesis"
+          }
+        ]
+      }
+    },
+    {
+      "key": "flags",
+      "source_url": "https://atlas.example/docs/flags",
+      "source_type": "documentation",
+      "category": "configuration",
+      "content": "The Atlas release guide describes server-evaluated feature flags and workspace-scoped rollout rules. The evaluation service and persistence backend are not identified.",
+      "signals": {
+        "component": {
+          "id": "flags",
+          "label": "Feature configuration",
+          "kind": "configuration",
+          "lane": "Operations",
+          "position": {
+            "x": 1360,
+            "y": 710
+          },
+          "description": "Workspace-scoped feature rollout",
+          "classification": "observed"
+        },
+        "connections": [
+          {
+            "source": "api",
+            "target": "flags",
+            "label": "Evaluates policy",
+            "classification": "inferred"
+          }
+        ]
+      }
+    },
+    {
+      "key": "delivery-marketing",
+      "source_url": "https://atlas.example/product/reliability",
+      "source_type": "page_text",
+      "category": "messaging",
+      "content": "The Atlas product reference describes event delivery as exactly-once. This conflicts with the technical queue contract, which specifies at-least-once delivery and consumer deduplication.",
+      "signals": {
+        "delivery_claim": "exactly-once"
+      }
+    }
+  ]
+}

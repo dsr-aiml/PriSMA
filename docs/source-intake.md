@@ -1,0 +1,17 @@
+# Source intake
+
+Files and repositories share one staged inventory. Add files, readable documents, repository ZIPs, public GitHub branches or a project folder; each later addition appends to the same review. Drag/drop and clipboard file objects use the same route. Plain document paste is absent from the interface. Live URL assessment remains a separate workflow because collection has its own request allowances and progress record.
+
+Select recommended sources or adjust the inventory before analysis. The source preview preserves paths, format, classification, parse warnings and readable content. A borderless cross removes a document from the staged review and updates its selection/preview. Existing reports keep their separate saved source records. Reviews expire after one hour; a successful append renews the staging window.
+
+The bounded reader accepts Markdown/text, HTML, JSON, YAML, TOML, supported source/configuration files, SQL, text-extractable PDFs and DOCX. ZIPs are inspected without extraction or execution. Limits are 50 MB per upload, 120 MB expanded per archive, 2 MB per ordinary file (15 MB for HAR before sanitization), 20,000 archive/folder entries, 2,000 retained sources and twelve million readable characters per combined review. Duplicate content and conflicting paths are recorded rather than silently replacing an existing source. Nested archives, generated dependencies, binary formats, credentials and unsafe paths are excluded.
+
+Public GitHub intake reads the default branch or an explicit /tree/branch archive using the same inspection rules. It requires no TinyFish credits. Each retained file carries its repository/archive acquisition metadata, independently of local files added to the same review. It is a captured branch snapshot, not a continuously synchronized checkout. Repositories requiring authentication, large archives and directory/blob URLs require another permitted intake route.
+
+Importing a real prisma.report JSON restores original source documents and attribution for fresh analysis. Old claims, answers and model results are not copied. Reference exports do not enter the real-source pipeline. JSON/SQLite retain original and normalized content, source spans and report-specific settings.
+
+Explicit parsing establishes supported structural declarations, API contracts, hosting statements, capability lists and simple Mermaid flowcharts. Local or hosted inference reviews eligible prose with bounded source-unit selection. A README can describe an architecture without containing every detail; inspect its source record and supporting excerpts when assessing the result.
+
+## Upload transport and decoding
+
+Files/ZIPs use binary request bodies. Folder and multi-file requests carry `application/vnd.prisma.files+json`; each file is byte-encoded with its original path and size. The server also accepts the older client’s accidentally combined MIME header. Folder archives remain excluded rather than being implicitly unpacked. Text readers support UTF-8, BOM-marked UTF-16/32, strongly detectable unmarked UTF-16, and Windows-1252 text. Binary controls are rejected. PDF/DOCX extraction remains bounded; scanned or encrypted PDF and damaged document containers receive file-specific reasons. A wholly rejected upload lists up to four failed paths/reasons without exposing document contents. Folder file-size exclusions keep the real size instead of turning into a generic empty-document error.

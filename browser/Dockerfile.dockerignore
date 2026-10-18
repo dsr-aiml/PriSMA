@@ -1,0 +1,11 @@
+*
+!browser/
+!browser/service.py
+!backend/
+!backend/app/
+!backend/app/public_files.py
+!backend/app/web_observation.py
+!backend/app/public_surface.py
+!backend/app/resource_policy.py
+!backend/app/read_operations.py
+!browser/entrypoint.sh

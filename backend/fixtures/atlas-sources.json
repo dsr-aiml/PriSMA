@@ -1,0 +1,95 @@
+{
+  "name": "Atlas",
+  "version": "3.0",
+  "description": "Fictional reference source bundle",
+  "sources": [
+    {
+      "title": "architecture.md",
+      "origin": "local:atlas/docs/architecture.md",
+      "format": "markdown",
+      "content": "# Atlas architecture\nAtlas is a fictional collaborative work platform. The repository and published contract below form the reference source set.\n\n```mermaid\nflowchart LR\n  Client[Web client] -->|HTTPS requests| API[Application API]\n  API -->|queries and transactions| DB[PostgreSQL]\n  API -->|enqueues jobs| Queue[Redis]\n  Queue -->|delivers jobs| Worker[Background worker]\n  Worker -->|stores attachments| Storage[Object storage]\n  API -->|subscription events| Billing[Stripe]\n  API -->|authenticates identity| Identity[OpenID Connect]\n```\n\n## Capabilities\n- Workspace collaboration with scoped membership\n- Project and task management with assignments\n- Attachment uploads with signed download links\n- Background exports with progress tracking\n- Subscription billing via Stripe\n- Audit history for administrative actions\n\n## Implementation boundaries\nThe public contract declares Workspace, Project and Task resources. The deployment declares PostgreSQL, Redis and S3-compatible object storage. Runtime replication topology and tenant isolation are outside the supplied source set.\n",
+      "category": "architecture",
+      "scope": "quick"
+    },
+    {
+      "title": "openapi.json",
+      "origin": "local:atlas/api/openapi.json",
+      "format": "openapi",
+      "content": "{\n  \"openapi\": \"3.1.0\",\n  \"info\": {\n    \"title\": \"Atlas Application API\",\n    \"version\": \"2.0.0\"\n  },\n  \"servers\": [\n    {\n      \"url\": \"https://atlas.example/api\"\n    }\n  ],\n  \"security\": [\n    {\n      \"BearerAuth\": []\n    }\n  ],\n  \"paths\": {\n    \"/workspaces\": {\n      \"get\": {\n        \"operationId\": \"listWorkspaces\",\n        \"summary\": \"List workspace records\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"A resource list\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Workspace\"\n                  }\n                }\n              }\n            }\n          }\n        }\n      },\n      \"post\": {\n        \"operationId\": \"createWorkspace\",\n        \"summary\": \"Create workspace\",\n        \"requestBody\": {\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Workspace\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Resource created\"\n          }\n        }\n      }\n    },\n    \"/projects\": {\n      \"get\": {\n        \"operationId\": \"listProjects\",\n        \"summary\": \"List project records\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"A resource list\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Project\"\n                  }\n                }\n              }\n            }\n          }\n        }\n      },\n      \"post\": {\n        \"operationId\": \"createProject\",\n        \"summary\": \"Create project\",\n        \"requestBody\": {\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Project\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Resource created\"\n          }\n        }\n      }\n    },\n    \"/tasks\": {\n      \"get\": {\n        \"operationId\": \"listTasks\",\n        \"summary\": \"List task records\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"A resource list\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Task\"\n                  }\n                }\n              }\n            }\n          }\n        }\n      },\n      \"post\": {\n        \"operationId\": \"createTask\",\n        \"summary\": \"Create task\",\n        \"requestBody\": {\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Task\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Resource created\"\n          }\n        }\n      }\n    }\n  },\n  \"components\": {\n    \"securitySchemes\": {\n      \"BearerAuth\": {\n        \"type\": \"http\",\n        \"scheme\": \"bearer\"\n      }\n    },\n    \"schemas\": {\n      \"Workspace\": {\n        \"type\": \"object\",\n        \"required\": [\n          \"id\"\n        ],\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"name\": {\n            \"type\": \"string\"\n          },\n          \"created_at\": {\n            \"type\": \"string\",\n            \"format\": \"date-time\"\n          }\n        }\n      },\n      \"Project\": {\n        \"type\": \"object\",\n        \"required\": [\n          \"id\"\n        ],\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"workspace_id\": {\n            \"type\": \"string\"\n          },\n          \"name\": {\n            \"type\": \"string\"\n          },\n          \"archived\": {\n            \"type\": \"boolean\"\n          }\n        }\n      },\n      \"Task\": {\n        \"type\": \"object\",\n        \"required\": [\n          \"id\"\n        ],\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"project_id\": {\n            \"type\": \"string\"\n          },\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"open\",\n              \"active\",\n              \"done\"\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "category": "api_reference",
+      "scope": "quick"
+    },
+    {
+      "title": "package.json",
+      "origin": "local:atlas/web/package.json",
+      "format": "json",
+      "content": "{\n  \"name\": \"atlas-web\",\n  \"version\": \"2.0.0\",\n  \"dependencies\": {\n    \"next\": \"15.5.0\",\n    \"react\": \"19.1.0\",\n    \"react-dom\": \"19.1.0\"\n  },\n  \"devDependencies\": {\n    \"typescript\": \"5.9.0\"\n  }\n}",
+      "category": "manifest",
+      "scope": "quick"
+    },
+    {
+      "title": "pyproject.toml",
+      "origin": "local:atlas/services/api/pyproject.toml",
+      "format": "toml",
+      "content": "[project]\nname = \"atlas-api\"\nversion = \"2.0.0\"\ndependencies = [\"fastapi>=0.115\", \"psycopg>=3.2\", \"redis>=5.2\", \"boto3>=1.35\"]\n",
+      "category": "manifest",
+      "scope": "standard"
+    },
+    {
+      "title": "compose.yaml",
+      "origin": "local:atlas/compose.yaml",
+      "format": "yaml",
+      "content": "services:\n  api:\n    build: ./services/api\n    depends_on: [db, redis]\n    ports: [8000:8000]\n  worker:\n    build: ./services/api\n    command: python -m worker\n    depends_on: [redis, db]\n  db:\n    image: postgres:16-alpine\n  redis:\n    image: redis:7-alpine\n",
+      "category": "configuration",
+      "scope": "standard"
+    },
+    {
+      "title": "main.py",
+      "origin": "local:atlas/services/api/main.py",
+      "format": "python",
+      "content": "from fastapi import FastAPI\nfrom .projects import list_projects\nfrom .jobs import enqueue_export\n\napp = FastAPI()\n\n@app.get(\"/projects\")\ndef projects():\n    return list_projects()\n\n@app.post(\"/exports\")\ndef exports(project_id: str):\n    return enqueue_export(project_id)\n",
+      "category": "source_code",
+      "scope": "standard"
+    },
+    {
+      "title": "projects.py",
+      "origin": "local:atlas/services/api/projects.py",
+      "format": "python",
+      "content": "import psycopg\n\ndef list_projects():\n    with psycopg.connect() as connection:\n        return connection.execute(\"SELECT id, name FROM projects\").fetchall()\n",
+      "category": "source_code",
+      "scope": "standard"
+    },
+    {
+      "title": "jobs.py",
+      "origin": "local:atlas/services/api/jobs.py",
+      "format": "python",
+      "content": "import redis\n\ndef enqueue_export(project_id: str):\n    queue = redis.Redis(host=\"redis\")\n    queue.rpush(\"exports\", project_id)\n    return {\"project_id\": project_id, \"status\": \"queued\"}\n",
+      "category": "source_code",
+      "scope": "standard"
+    },
+    {
+      "title": "page.tsx",
+      "origin": "local:atlas/web/app/projects/page.tsx",
+      "format": "typescript",
+      "content": "import { ProjectList } from \"../../components/ProjectList\";\nexport default function ProjectsPage() {\n  return <ProjectList />;\n}\n",
+      "category": "source_code",
+      "scope": "standard"
+    },
+    {
+      "title": "ProjectList.tsx",
+      "origin": "local:atlas/web/components/ProjectList.tsx",
+      "format": "typescript",
+      "content": "\"use client\";\nimport { useEffect, useState } from \"react\";\nexport function ProjectList() {\n  const [projects, setProjects] = useState([]);\n  useEffect(() => { fetch(\"/api/projects\").then(response => response.json()).then(setProjects); }, []);\n  return <section>{projects.map((project: {id: string; name: string}) => <div key={project.id}>{project.name}</div>)}</section>;\n}\n",
+      "category": "source_code",
+      "scope": "standard"
+    },
+    {
+      "title": "pricing.md",
+      "origin": "local:atlas/docs/pricing.md",
+      "format": "markdown",
+      "content": "# Subscription plans\nPublic plan terms for the fictional Atlas product.\n\n| Feature | Starter | Enterprise |\n| --- | --- | --- |\n| Workspace collaboration | Included | Included |\n| Active projects | Up to 3 projects | Unlimited |\n| Single sign-on | Not included | Included |\n| Audit history | Not included | Included |\n| Background exports | Up to 10 exports per month | Unlimited |\n",
+      "category": "pricing",
+      "scope": "standard"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# Local secrets (keep templates)
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+# Dependencies and builds
+node_modules/
+.next/
+out/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.tsbuildinfo
+# Local databases, logs, artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.log
+coverage/
+htmlcov/
+playwright-report/
+test-results/
+.overlay-backups/
+.update-state.lock
+*.prisma-version
+*.zip
+# Editors and OS
+.idea/
+.vscode/*
+.vscode/
+scripts/
+.DS_Store
+*~
+
+backups/
+pytest-of-root/
+
+# Private database backups and local model measurements
+*.sql
+*-evaluation.json
