@@ -4,7 +4,10 @@
 
 > We built it to make technical research easier for students, developers and teams. Each finding stays connected to its source, so users can check how we reached it.
 
-Video demo: coming soon.
+## DEMONSTRATION
+https://github.com/user-attachments/assets/6c1969d6-4c65-42c5-9e54-3241ac5b177d
+
+
 
 ## WHAT IT DOES
 
@@ -188,3 +191,4 @@ We plan to improve PriSMA in the following areas:
 ---
 
 ## LICENSE
+This project is built under [GPL v3.0 LICENSE](LICENSE).
