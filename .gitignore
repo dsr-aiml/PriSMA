@@ -27,13 +27,14 @@ playwright-report/
 test-results/
 .overlay-backups/
 .update-state.lock
-*.prisma-version
+.prisma-version
 *.zip
 # Editors and OS
 .idea/
 .vscode/*
 .vscode/
 scripts/
+update-manifest.json
 .DS_Store
 *~
 
