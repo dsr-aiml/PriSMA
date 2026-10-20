@@ -1,8 +1,14 @@
 # PriSMA
 
-> PriSMA helps people understand unfamiliar software. It collects evidence from files, project folders, public GitHub repositories and live websites, then presents the product's features, technologies and possible architecture in one workspace.
+PriSMA helps people understand unfamiliar software. It collects evidence from files, project folders, public GitHub repositories and live websites, then presents the product's features, technologies and possible architecture in one workspace.
 
-> We built it to make technical research easier for students, developers and teams. Each finding stays connected to its source, so users can check how we reached it.
+We built it to make technical research easier for students, developers and teams. Each finding stays connected to its source, so users can check how we reached it.
+
+### DEPLOYMENT
+
+**ITS LIVE** (FOR A LIMITED TIME ONLY). GIVE IT A TRY:  [`prisma.live`](https://pri-sma.vercel.app)
+
+> **NOTE:** To keep this demo strictly within zero-cost free-tier resource bounds, the **Browser Inspection** feature is disabled in the live deployment. Browser inspection requires PriSMA's isolated, sandboxed **Chromium** container (`--profile browser`), which runs with dedicated Linux seccomp security profiles and higher memory bounds. The full browser inspection pipeline can be experienced locally via the running commands mentioned in "STOP-START SIMPLE" section.
 
 ## DEMONSTRATION
 https://github.com/user-attachments/assets/6c1969d6-4c65-42c5-9e54-3241ac5b177d
