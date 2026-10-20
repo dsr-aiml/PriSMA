@@ -39,6 +39,7 @@ scripts/
 update-manifest.json
 .DS_Store
 *~
+credentials.txt
 
 backups/
 pytest-of-root/
