@@ -45,8 +45,8 @@ class Settings(BaseSettings):
     allow_hosted_models: bool = False
     allow_hosted_queries: bool = True
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-3.8-flash"
-    gemini_query_model: str = "gemini-3.5-flash-lite"
+    gemini_model: str = "gemini-flash-lite-latest"
+    gemini_query_model: str = "gemini-flash-latest"
     gemini_query_context_tokens: int = Field(default=32768, ge=4096, le=32768)
     gemini_query_output_tokens: int = Field(default=3000, ge=800, le=4096)
     gemini_query_rpm: int = Field(default=6, ge=1, le=60)

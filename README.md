@@ -149,7 +149,9 @@ sudo docker compose --profile inference --profile browser up -d
 
 ## REBUILDING AFTER ANY CHANGE: 
 
-`sudo docker compose --profile inference --profile browser up --build -d`
+```bash
+sudo docker compose --profile inference --profile browser up --build -d
+```
 
 Or rebuild only affected services:
 ```bash

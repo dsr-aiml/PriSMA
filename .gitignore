@@ -31,6 +31,8 @@ test-results/
 *.zip
 # Editors and OS
 .idea/
+delivery/
+delivery/*
 .vscode/*
 .vscode/
 scripts/
