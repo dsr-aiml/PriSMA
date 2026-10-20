@@ -1,3 +1,0 @@
-Fictional Beacon architecture notes. The Web client sends HTTPS requests to the Gateway API. The Gateway API publishes jobs to the Job queue. The Worker consumes jobs from the Job queue. PostgreSQL is explicitly named as the application database. The private deployment topology and physical tables are not documented.
-
-Fictional Beacon pricing. Audit export is included in the Enterprise tier. The Starter tier excludes Audit export. The Enterprise tier includes Custom retention with a limit of 365 days. The Starter tier includes Custom retention with a limit of 7 days. Prices and deployment internals are not stated.
